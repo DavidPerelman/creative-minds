@@ -18,8 +18,6 @@ export default function Details() {
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState([]);
 
-  console.log(allMessages);
-
   // Submit a message
   const submitMessage = async () => {
     // See if the user is logged
@@ -54,7 +52,6 @@ export default function Details() {
 
   useEffect(() => {
     if (!route.isReady) return;
-
     getComments();
   }, [route, getComments]);
 
@@ -81,8 +78,8 @@ export default function Details() {
           <h2 className='font-bold'>Comments</h2>
           {allMessages.map((message, i) => {
             return (
-              <div key={i}>
-                <div>
+              <div key={i} className='bg-white p-4 my-4 border-2'>
+                <div className='flex items-center gap-2 mb-4'>
                   <Image
                     src={message.avatar}
                     alt='avatar'
