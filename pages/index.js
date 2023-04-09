@@ -2,6 +2,7 @@ import Message from '@/components/Message';
 import { db } from '@/utils/firebase';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
@@ -13,7 +14,6 @@ export default function Home() {
     const q = query(collectionRef, orderBy('timestamp', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setAllPosts(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      console.log(snapshot.docs.map((doc) => ({ ...doc.data() })));
     });
 
     return unsubscribe;
@@ -33,7 +33,13 @@ export default function Home() {
       <div className='my-12 text-lg font-medium'>
         <h2>See what other people are saying</h2>
         {allPosts.map((post) => {
-          return <Message key={post.id} {...post} />;
+          return (
+            <Message key={post.id} {...post}>
+              <Link href={{ pathname: `/${post.id}`, query: { ...post } }}>
+                <button>comments</button>
+              </Link>
+            </Message>
+          );
         })}
       </div>
     </div>
