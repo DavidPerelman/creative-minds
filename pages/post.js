@@ -1,7 +1,7 @@
 import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
@@ -9,6 +9,7 @@ export default function Post() {
   const route = useRouter();
   const [user, loading] = useAuthState(auth);
   const [post, setPost] = useState({ description: '' });
+  const routeData = route.query;
 
   // Submit Post
   const submitPost = async (e) => {
@@ -45,6 +46,19 @@ export default function Post() {
     setPost({ description: '' });
     return route.push('/');
   };
+
+  // Check our user
+  const checkUser = useCallback(async () => {
+    if (loading) return;
+    if (!user) return route.push('/auth/login');
+    if (routeData.id) {
+      setPost({ description: routeData.description, id: routeData.id });
+    }
+  }, [user, loading, route, routeData]);
+
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
 
   return (
     <div className='my-20 p-12 shadow-lg rounded-lg max-w-medium mx-auto'>
