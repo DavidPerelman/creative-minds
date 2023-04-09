@@ -20,7 +20,7 @@ export default function Dashboard() {
   const [user, loading] = useAuthState(auth);
   const [posts, setPosts] = useState([]);
 
-  // See if user is logged
+  // See if the user is logged
   const getData = useCallback(async () => {
     if (loading) return;
     if (!user) return route.push('/auth/login');
