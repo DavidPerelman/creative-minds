@@ -1,9 +1,15 @@
 import Message from '@/components/Message';
 import { auth, db } from '@/utils/firebase';
-import { arrayUnion, doc, Timestamp, updateDoc } from 'firebase/firestore';
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  Timestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 export default function Details() {
@@ -11,6 +17,8 @@ export default function Details() {
   const routeData = route.query;
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState([]);
+
+  console.log(allMessages);
 
   // Submit a message
   const submitMessage = async () => {
@@ -37,6 +45,19 @@ export default function Details() {
     setMessage('');
   };
 
+  // Get comments
+  const getComments = useCallback(async () => {
+    const docRef = doc(db, 'posts', routeData.id);
+    const docSnap = await getDoc(docRef);
+    setAllMessages(docSnap.data().comments);
+  }, [routeData]);
+
+  useEffect(() => {
+    if (!route.isReady) return;
+
+    getComments();
+  }, [route, getComments]);
+
   return (
     <div>
       <Message {...routeData}></Message>
@@ -58,18 +79,20 @@ export default function Details() {
         </div>
         <div className='py-6'>
           <h2 className='font-bold'>Comments</h2>
-          {allMessages.map((message) => {
+          {allMessages.map((message, i) => {
             return (
-              <div key={message.id}>
+              <div key={i}>
                 <div>
-                  {/* <Image
-                    src={avatar}
+                  <Image
+                    src={message.avatar}
                     alt='avatar'
                     width={48}
                     height={48}
                     className='w-10 rounded-full'
-                  /> */}
+                  />
+                  <h2>{message.username}</h2>
                 </div>
+                <h2>{message.message}</h2>
               </div>
             );
           })}
