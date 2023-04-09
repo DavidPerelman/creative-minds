@@ -27,9 +27,11 @@ export default function Nav() {
               </button>
             </Link>
             <Link href='/dashboard'>
-              <img
+              <Image
                 src={user.photoURL}
                 alt='user image'
+                width={48}
+                height={48}
                 className='w-12 rounded-full cursor-pointer'
               />
             </Link>

@@ -7,16 +7,16 @@ export default function Dashboard() {
   const route = useRouter();
   const [user, loading] = useAuthState(auth);
 
-  // See if user id logged
-  const getData = async () => {
-    if (loading) return;
-    if (!user) return route.push('/auth/login');
-  };
-
   // Get users data
   useEffect(() => {
+    // See if user is logged
+    const getData = async () => {
+      if (loading) return;
+      if (!user) return route.push('/auth/login');
+    };
+
     getData();
-  }, [user, loading, getData]);
+  }, [user, loading, route]);
 
   return (
     <div>
