@@ -15,6 +15,7 @@ export default function Home() {
       setAllPosts(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       console.log(snapshot.docs.map((doc) => ({ ...doc.data() })));
     });
+
     return unsubscribe;
   };
 
@@ -32,7 +33,7 @@ export default function Home() {
       <div className='my-12 text-lg font-medium'>
         <h2>See what other people are saying</h2>
         {allPosts.map((post) => {
-          return <Message key={post.id} {...post}></Message>;
+          return <Message key={post.id} {...post} />;
         })}
       </div>
     </div>
