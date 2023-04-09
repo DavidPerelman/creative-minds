@@ -26,7 +26,7 @@ export default function Nav() {
                 Post
               </button>
             </Link>
-            <Link href='/dashborad'>
+            <Link href='/dashboard'>
               <img
                 src={user.photoURL}
                 alt='user image'
