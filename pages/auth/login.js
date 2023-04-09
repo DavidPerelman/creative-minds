@@ -9,7 +9,6 @@ export default function Login() {
   const route = useRouter();
   const [user, loading] = useAuthState(auth);
 
-  console.log(user);
   // Sign In With Google
   const googleAuthProvider = new GoogleAuthProvider();
   const googleLogin = async () => {
