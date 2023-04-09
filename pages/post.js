@@ -2,7 +2,13 @@ import { auth, db } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import { toast } from 'react-toastify';
 
 export default function Post() {
@@ -33,18 +39,25 @@ export default function Post() {
       return;
     }
 
-    // Make a new post
-    const collectionRef = collection(db, 'posts');
-    await addDoc(collectionRef, {
-      ...post,
-      timestamp: serverTimestamp(),
-      user: user.uid,
-      avatar: user.photoURL,
-      username: user.displayName,
-    });
+    if (post?.hasOwnProperty('id')) {
+      const docRef = doc(db, 'posts', post.id);
+      const updatedPost = { ...post, timestamp: serverTimestamp() };
+      await updateDoc(docRef, updatedPost);
+      return route.push('/');
+    } else {
+      // Make a new post
+      const collectionRef = collection(db, 'posts');
+      await addDoc(collectionRef, {
+        ...post,
+        timestamp: serverTimestamp(),
+        user: user.uid,
+        avatar: user.photoURL,
+        username: user.displayName,
+      });
 
-    setPost({ description: '' });
-    return route.push('/');
+      setPost({ description: '' });
+      return route.push('/');
+    }
   };
 
   // Check our user
@@ -63,7 +76,9 @@ export default function Post() {
   return (
     <div className='my-20 p-12 shadow-lg rounded-lg max-w-medium mx-auto'>
       <form onSubmit={submitPost}>
-        <h1 className='text-2xl font-bold'>Create a new post</h1>
+        <h1 className='text-2xl font-bold'>
+          {post.hasOwnProperty('id') ? 'Edit your post' : 'Create a new post'}
+        </h1>
         <div className='py-2'>
           <h3 className='text-lg font-medium py-2'>Description</h3>
           <textarea
