@@ -4,6 +4,7 @@ import {
   arrayUnion,
   doc,
   getDoc,
+  onSnapshot,
   Timestamp,
   updateDoc,
 } from 'firebase/firestore';
@@ -46,8 +47,11 @@ export default function Details() {
   // Get comments
   const getComments = useCallback(async () => {
     const docRef = doc(db, 'posts', routeData.id);
-    const docSnap = await getDoc(docRef);
-    setAllMessages(docSnap.data().comments);
+    const unsubscribe = onSnapshot(docRef, (snapshot) => {
+      setAllMessages(snapshot.data().comments);
+    });
+
+    return unsubscribe;
   }, [routeData]);
 
   useEffect(() => {
@@ -76,23 +80,24 @@ export default function Details() {
         </div>
         <div className='py-6'>
           <h2 className='font-bold'>Comments</h2>
-          {allMessages.map((message, i) => {
-            return (
-              <div key={i} className='bg-white p-4 my-4 border-2'>
-                <div className='flex items-center gap-2 mb-4'>
-                  <Image
-                    src={message.avatar}
-                    alt='avatar'
-                    width={48}
-                    height={48}
-                    className='w-10 rounded-full'
-                  />
-                  <h2>{message.username}</h2>
+          {allMessages &&
+            allMessages.map((message, i) => {
+              return (
+                <div key={i} className='bg-white p-4 my-4 border-2'>
+                  <div className='flex items-center gap-2 mb-4'>
+                    <Image
+                      src={message.avatar}
+                      alt='avatar'
+                      width={48}
+                      height={48}
+                      className='w-10 rounded-full'
+                    />
+                    <h2>{message.username}</h2>
+                  </div>
+                  <h2>{message.message}</h2>
                 </div>
-                <h2>{message.message}</h2>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </div>
